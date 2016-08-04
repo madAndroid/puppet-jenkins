@@ -177,13 +177,6 @@ describe 'jenkins::slave' do
         )
       end
     end
-
-    describe 'without defaults file' do
-      let(:params) { { :manage_slave_defaults => false } }
-      it do
-        should_not contain_file(slave_runtime_file)
-      end
-    end
   end
 
   describe 'Debian' do
@@ -201,13 +194,6 @@ describe 'jenkins::slave' do
     it do
       should contain_package('daemon')
         .that_comes_before('Service[jenkins-slave]')
-    end
-
-    describe 'without defaults file' do
-      let(:params) { { :manage_slave_defaults => false } }
-      it do
-        should_not contain_file(slave_runtime_file)
-      end
     end
   end
 
