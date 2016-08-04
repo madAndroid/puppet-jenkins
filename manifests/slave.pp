@@ -60,8 +60,8 @@
 # [*manage_client_jar*]
 #   Should the class download the client jar file from the web? Defaults to true.
 #
-# [*manage_slave_defaults*]
-#   Whether or not to manage the sysconfig/defaults for the slave daemon. Defaults to true.
+# [*defaults_template*]
+#   Location of the defaults template. Defaults to "${module_name}/jenkins-slave-defaults.erb"
 #
 # [*ensure*]
 #   Service ensure control for jenkins-slave service. Default running
@@ -117,7 +117,7 @@ class jenkins::slave (
   $tool_locations           = undef,
   $install_java             = $jenkins::params::install_java,
   $manage_client_jar        = true,
-  $manage_slave_defaults    = true,
+  $defaults_template        = "${module_name}/jenkins-slave-defaults.erb",
   $ensure                   = 'running',
   $enable                   = true,
   $source                   = undef,
@@ -141,7 +141,7 @@ class jenkins::slave (
   validate_string($tool_locations)
   validate_bool($install_java)
   validate_bool($manage_client_jar)
-  validate_bool($manage_slave_defaults)
+  validate_string($defaults_template)
   validate_re($ensure, '^running$|^stopped$')
   validate_bool($enable)
   validate_string($source)
@@ -269,15 +269,13 @@ class jenkins::slave (
     }
   }
 
-  if $manage_slave_defaults {
-    file { "${defaults_location}/jenkins-slave":
-      ensure  => 'file',
-      mode    => '0600',
-      owner   => $defaults_user,
-      group   => $defaults_group,
-      content => template("${module_name}/jenkins-slave-defaults.erb"),
-      notify  => Service['jenkins-slave'],
-    }
+  file { "${defaults_location}/jenkins-slave":
+    ensure  => 'file',
+    mode    => '0600',
+    owner   => $defaults_user,
+    group   => $defaults_group,
+    content => template($defaults_template),
+    notify  => Service['jenkins-slave'],
   }
 
   if ($manage_client_jar) {
