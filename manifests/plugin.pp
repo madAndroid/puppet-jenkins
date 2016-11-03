@@ -33,6 +33,7 @@ define jenkins::plugin(
   $username        = undef,
   $group           = undef,
   $create_user     = undef,
+  $file_mode       = '0644',
 ) {
   validate_string($version)
   validate_bool($manage_config)
@@ -43,6 +44,7 @@ define jenkins::plugin(
   validate_string($source)
   validate_string($digest_string)
   validate_string($digest_type)
+  validate_string($file_mode)
   validate_bool($pin)
 
   if $timeout {
@@ -140,7 +142,7 @@ define jenkins::plugin(
       ensure  => $enabled_ensure,
       owner   => $::jenkins::user,
       group   => $::jenkins::group,
-      mode    => '0644',
+      mode    => $file_mode,
       require => Archive[$plugin],
       notify  => Service['jenkins'],
     }
@@ -182,7 +184,7 @@ define jenkins::plugin(
     file { "${::jenkins::plugin_dir}/${plugin}" :
       owner   => $::jenkins::user,
       group   => $::jenkins::group,
-      mode    => '0644',
+      mode    => $file_mode,
       require => Archive[$plugin],
       before  => Service['jenkins'],
     }
@@ -198,7 +200,7 @@ define jenkins::plugin(
       content => $config_content,
       owner   => $::jenkins::user,
       group   => $::jenkins::group,
-      mode    => '0644',
+      mode    => $file_mode,
       notify  => Service['jenkins']
     }
   }
