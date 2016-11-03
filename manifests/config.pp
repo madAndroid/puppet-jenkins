@@ -6,7 +6,9 @@ class jenkins::config {
     fail("Use of private class ${name} by ${caller_module_name}")
   }
 
-  ensure_resource('jenkins::plugin', $::jenkins::params::default_plugins)
+  if $::jenkins::default_plugins {
+    ensure_resource('jenkins::plugin', $::jenkins::params::default_plugins)
+  }
 
   $config_hash = merge(
     $::jenkins::params::config_hash_defaults,

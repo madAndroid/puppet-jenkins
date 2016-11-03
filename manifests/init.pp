@@ -181,6 +181,7 @@ class jenkins(
   $service_provider   = $jenkins::params::service_provider,
   $config_hash        = {},
   $plugin_hash        = {},
+  $default_plugins    = true,
   $job_hash           = {},
   $user_hash          = {},
   $configure_firewall = false,
